@@ -6,18 +6,6 @@ from utils.get_random import get_random_number
 
 class GeneticAlgorithm:
 
-    a = 0 
-    b = 0
-    dx = 0 
-    n = 0
-    bits = 0 
-    dx_fit = 0 
-    max_bits = 0
-
-    mutation_probability = 0.5
-    mutation_bit_probability = 0.5
-    cross_probability = 0.7
-
     parents = []
     matches = []
     childrens = []
@@ -25,7 +13,13 @@ class GeneticAlgorithm:
 
     generations = []
 
-    def __init__(self, a, b, dx):
+    y_best = []
+    y_worst = []
+    y_avg = []
+    x_generation = []
+
+
+    def __init__(self, a, b, dx, p_cross, p_mutation, p_mutation_bit):
         self.a = a
         self.b = b
         self.dx = dx 
@@ -33,6 +27,9 @@ class GeneticAlgorithm:
         self.bits = self.get_bits()
         self.dx_fit = self.get_dx_fit()
         self.max_bits = self.get_max_bits()
+        self.mutation_probability = p_mutation
+        self.mutation_bit_probability = p_mutation_bit
+        self.cross_probability = p_cross
     
     def get_n(self):
         return int(((self.b - self.a)/self.dx) + 1)
@@ -84,9 +81,9 @@ class GeneticAlgorithm:
             self.childrens.append(first_children)
             self.childrens.append(second_children)
         
-        print("Chindlrens")
-        for i in range(10):
-            print(f"i: {self.childrens[i].i} aptitude: {self.childrens[i].aptitude} binary: {self.childrens[i].binary} ")
+        # print("Chindlrens")
+        # for i in range(10):
+        #     print(f"i: {self.childrens[i].i} aptitude: {self.childrens[i].aptitude} binary: {self.childrens[i].binary} ")
         
     def set_mutations(self):
         for child in self.childrens:
@@ -110,9 +107,9 @@ class GeneticAlgorithm:
 
         self.generation = unique_subjects
 
-        print("Generation")
-        for i in range(10):
-            print(f"i: {self.generation[i].i} aptitude: {self.generation[i].aptitude} binary: {self.generation[i].binary} ")
+        # print("Generation")
+        # for i in range(10):
+        #     print(f"i: {self.generation[i].i} aptitude: {self.generation[i].aptitude} binary: {self.generation[i].binary} ")
 
     def set_generation(self):
 
@@ -131,19 +128,35 @@ class GeneticAlgorithm:
             print(f"i: {self.generations[i]["worst"].i } aptitude: {self.generations[i]["worst"].aptitude }" )
             print(f"i: {self.generations[i]["average"] }" )
 
+    def get_data_to_graphic(self):
+        
+        for i in range(len(self.generations)):
+            generation = self.generations[i]
+            self.y_best.append(generation["best"].aptitude)
+            self.y_worst.append(generation["worst"].aptitude)
+            self.y_avg.append(generation["average"])
+            self.x_generation.append(i + 1)
+
     def start(self):
         
         if not self.parents:
+            print("Paso aqui")
             self.set_poblation()
 
-        print("Parents")
-        for i in range(10):
-            print(f"i: {self.parents[i].i} aptitude: {self.parents[i].aptitude} binary: {self.parents[i].binary} ")
+        # print("Parents")
+        # for i in range(10):
+        #     print(f"i: {self.parents[i].i} aptitude: {self.parents[i].aptitude} binary: {self.parents[i].binary} ")
 
         self.set_matches()
         self.set_childrens()
         self.set_mutations()
 
         self.set_generation()
+
         self.set_mow()
         self.parents = self.generation
+
+        self.get_data_to_graphic()
+
+        return self.y_best, self.y_worst, self.y_avg, self.x_generation
+
