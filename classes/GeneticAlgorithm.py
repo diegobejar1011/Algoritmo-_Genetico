@@ -18,6 +18,20 @@ class GeneticAlgorithm:
     y_avg = []
     x_generation = []
 
+    generation_y = []
+    generation_x = []
+
+    best_x = []
+    best_y = []
+
+    worst_x = []
+    worst_y = []
+
+    avg_y = []
+
+    n_generation = 0
+
+
 
     def __init__(self, a, b, dx, p_cross, p_mutation, p_mutation_bit):
         self.a = a
@@ -95,7 +109,8 @@ class GeneticAlgorithm:
                             aux[j] = '0'
                         elif aux[j] == '0':
                             aux[j] = '1'
-                    child.binary = ''.join(aux)
+                    child = Subject(int(''.join(aux), 2))
+                    child.set_x(self.a, self.dx_fit)
     
     def set_mow(self):
         
@@ -129,7 +144,7 @@ class GeneticAlgorithm:
             print(f"i: {self.generations[i]["average"] }" )
 
     def get_data_to_graphic(self):
-        
+
         for i in range(len(self.generations)):
             generation = self.generations[i]
             self.y_best.append(generation["best"].aptitude)
@@ -137,8 +152,35 @@ class GeneticAlgorithm:
             self.y_avg.append(generation["average"])
             self.x_generation.append(i + 1)
 
+    def get_data_for_generation(self):
+
+        self.best_x.clear()
+        self.best_y.clear()
+        self.worst_x.clear()
+        self.worst_y.clear()
+        self.generation_x.clear()
+        self.generation_y.clear()
+        self.avg_y.clear()
+
+        j = len(self.generations) - 1
+        print(j)
+        generation = self.generations[j]
+        self.best_x.append(generation["best"].i)
+        self.best_y.append(generation["best"].aptitude)
+
+        self.worst_x.append(generation["worst"].i)
+        self.worst_y.append(generation["worst"].aptitude)
+
+        aux_childrens = sorted(self.childrens, key=lambda s: s.i, reverse=True)
+
+        for i in range(len(aux_childrens)):
+            subject = aux_childrens[i]
+            self.generation_x.append(subject.i)
+            self.generation_y.append(subject.aptitude)
+            self.avg_y.append(generation["average"])
+
     def start(self):
-        
+
         if not self.parents:
             print("Paso aqui")
             self.set_poblation()
@@ -152,11 +194,13 @@ class GeneticAlgorithm:
         self.set_mutations()
 
         self.set_generation()
+        self.get_data_for_generation()
 
         self.set_mow()
         self.parents = self.generation
 
-        self.get_data_to_graphic()
+        # self.get_data_to_graphic()
 
-        return self.y_best, self.y_worst, self.y_avg, self.x_generation
+        # return self.y_best, self.y_worst, self.y_avg, self.x_generation
 
+        return self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y

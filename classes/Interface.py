@@ -14,8 +14,8 @@ class Interface:
         # Columns
         self.root.columnconfigure(0, weight=1)
         self.root.columnconfigure(1, weight=1) 
-        self.root.grid_rowconfigure(0, weight=0)  # Fila 0 no se expande
-        self.root.grid_columnconfigure(1, weight=1)  # Columna 1 se expande dinámicamente para el gráfico
+        self.root.grid_rowconfigure(0, weight=0)
+        self.root.grid_columnconfigure(1, weight=1)  
         self.root.grid_rowconfigure(1, weight=1)
 
         # Frames
@@ -72,8 +72,8 @@ class Interface:
         self.fig, self.ax = plt.subplots()
         
         self.ax.grid(True)
-        self.ax.set_title("Analisis por generación")
-        self.ax.set_xlabel("Generación")
+        self.ax.set_title("Generación")
+        self.ax.set_xlabel("Tiempo")
         self.ax.set_ylabel("Aptitud")
 
         self.canvas = FigureCanvasTkAgg(self.fig, master = self.frame)
@@ -89,22 +89,27 @@ class Interface:
         p_mutation = float(self.input_mutation.get())
         p_mutation_bit = float(self.input_mutation_bit.get())
         self.ag = GeneticAlgorithm(a, b, dx, p_cross, p_mutation, p_mutation_bit)
-        self.y_best, self.y_worst, self.y_avg, self.x_generation = self.ag.start()
+        self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y = self.ag.start()
         self.update_graph()
 
     def update_graph(self):
-        # Limpiar y redibujar el gráfico
+
         self.ax.clear()
-        self.ax.set_title("Análisis por generación")
-        self.ax.set_xlabel("Generación")
+        self.ax.set_title("Generación")
+        self.ax.set_xlabel("Tiempo")
         self.ax.set_ylabel("Aptitud")
         self.ax.grid(True)
-        self.ax.plot(self.x_generation, self.y_best, label="Mejores")
-        self.ax.plot(self.x_generation, self.y_worst, label="Peores")
-        self.ax.plot(self.x_generation, self.y_avg, label="Promedio")
+
+        self.ax.plot(self.generation_x, self.avg_y, label="Promedio", color="blue", zorder=1)
+        self.ax.plot(self.generation_x, self.generation_y, label="F(x)", color="orange", zorder=2)
+
+        self.ax.scatter(self.generation_x, self.generation_y, label="Individuo", color="purple", zorder=3)
+        self.ax.scatter(self.best_x, self.best_y, label="Mejor", c="green", zorder=4)
+        self.ax.scatter(self.worst_x, self.worst_y, label="Peor", c="red", zorder=5)
+
         self.ax.legend()
 
-        # Actualizar el lienzo
+
         self.canvas.draw()
 
 
