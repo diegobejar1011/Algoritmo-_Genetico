@@ -95,7 +95,9 @@ class GeneticAlgorithm:
                             aux[j] = '0'
                         elif aux[j] == '0':
                             aux[j] = '1'
-                    child.binary = ''.join(aux)
+                    # child.binary = ''.join(aux)
+                    child = Subject(int( ''.join(aux) ,2))
+                    child.set_x(self.a, self.dx_fit)
     
     def set_mow(self):
         
