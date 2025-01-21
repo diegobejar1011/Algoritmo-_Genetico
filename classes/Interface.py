@@ -64,11 +64,11 @@ class Interface:
         self.input_mutation = tk.Entry(self.frame_inputs)
         self.input_mutation.grid(row=10, column=0, pady=5)
 
-        # Input Probabily Mutation Bit
-        self.label_mutation_bit = tk.Label(self.frame_inputs, text="Valor de la probabilidad de mutacion de bit:")
-        self.label_mutation_bit.grid(row=11, column=0, pady=5)
-        self.input_mutation_bit = tk.Entry(self.frame_inputs)
-        self.input_mutation_bit.grid(row=12, column=0, pady=5)
+        # # Input Probabily Mutation Bit
+        # self.label_mutation_bit = tk.Label(self.frame_inputs, text="Valor de la probabilidad de mutacion de bit:")
+        # self.label_mutation_bit.grid(row=11, column=0, pady=5)
+        # self.input_mutation_bit = tk.Entry(self.frame_inputs)
+        # self.input_mutation_bit.grid(row=12, column=0, pady=5)
 
         # Button Run
         self.button = tk.Button(self.frame_inputs, text="Iterar", command=self.run)
@@ -99,8 +99,8 @@ class Interface:
             dx = float(self.input_dx.get())
             p_cross = float(self.input_cross.get())
             p_mutation = float(self.input_mutation.get())
-            p_mutation_bit = float(self.input_mutation_bit.get())
-            self.ag = GeneticAlgorithm(a, b, dx, p_cross, p_mutation, p_mutation_bit)
+            # p_mutation_bit = float(self.input_mutation_bit.get())
+            self.ag = GeneticAlgorithm(a, b, dx, p_cross, p_mutation)
         self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y, self.n_generation = self.ag.start()
 
         self.update_graph()

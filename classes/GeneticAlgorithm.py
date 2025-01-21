@@ -31,7 +31,7 @@ class GeneticAlgorithm:
 
     n_generation = 0
 
-    def __init__(self, a, b, dx, p_cross, p_mutation, p_mutation_bit):
+    def __init__(self, a, b, dx, p_cross, p_mutation):
         self.a = a
         self.b = b
         self.dx = dx 
@@ -40,7 +40,7 @@ class GeneticAlgorithm:
         self.dx_fit = self.get_dx_fit()
         self.max_bits = self.get_max_bits()
         self.mutation_probability = p_mutation
-        self.mutation_bit_probability = p_mutation_bit
+        # self.mutation_bit_probability = p_mutation_bit
         self.cross_probability = p_cross
     
     def get_n(self):
@@ -78,16 +78,21 @@ class GeneticAlgorithm:
 
             # First children
             father_part_one = match[0].binary[:cut]
-            father_part_two = match[0].binary[cut:]
+
+            father_inverse = match[0].binary[::-1]
+            father_inverse_part_two = father_inverse[cut:]
 
             # Second children
             mother_part_one = match[1].binary[:cut]
-            mother_part_two = match[1].binary[cut:]
+            
+            mother_inverse = match[1].binary[::-1]
+            mother_inverse_part_two = mother_inverse[cut:]
 
-            first_children = Subject(int(father_part_one + mother_part_two, 2))
+
+            first_children = Subject(int(father_part_one + mother_inverse_part_two, 2))
             first_children.set_x(self.a, self.dx_fit)
 
-            second_children = Subject(int(mother_part_one + father_part_two, 2))
+            second_children = Subject(int(mother_part_one + father_inverse_part_two, 2))
             second_children.set_x(self.a, self.dx_fit)
 
             self.childrens.append(first_children)
@@ -99,16 +104,16 @@ class GeneticAlgorithm:
         
     def set_mutations(self):
         for child in self.childrens:
-            aux = list(child.binary)
             if get_random_number() <= self.mutation_probability:
-                for j in range(len(child.binary)):
-                    if random.random() <= self.mutation_bit_probability:
-                        if aux[j] == '1':
-                            aux[j] = '0'
-                        elif aux[j] == '0':
-                            aux[j] = '1'
-                    child = Subject(int(''.join(aux), 2))
-                    child.set_x(self.a, self.dx_fit)
+                s = random.randint(1, 2**(self.bits - 1) - 1)
+                number_binary = int(child.binary, 2)
+                mutated_value = (number_binary + s) % 2**self.bits
+                print(f"Before Individuo:{child}")
+                child = Subject(mutated_value)
+                child.binary = child.binary.zfill(self.bits)
+                child.set_x(self.a, self.dx_fit)
+                print(f"After Individuo:{child}")
+
     
     def set_mow(self):
         
@@ -119,6 +124,9 @@ class GeneticAlgorithm:
         unique_subjects = list(unique_subjects) 
 
         self.generation = unique_subjects
+
+        if(len(self.generation) > self.max_bits):
+            self.generation = self.generation[:self.max_bits - 1]
 
         # print("Generation")
         # for i in range(10):

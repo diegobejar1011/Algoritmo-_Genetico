@@ -15,5 +15,7 @@ class Subject:
         self.set_aptitude()
     
     def set_aptitude(self):
-        self.aptitude = 0.1 * self.x * math.log(1 + abs(self.x)) * math.cos(self.x) * math.cos(self.x)
-
+        aux = 0
+        if(self.x > 0):
+            aux = math.log(abs(self.x**3)) * math.cos(self.x) * math.sin(self.x)
+        self.aptitude = aux
