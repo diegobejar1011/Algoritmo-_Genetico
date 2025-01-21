@@ -1,12 +1,19 @@
 import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import os
+import cv2
 
 from classes.GeneticAlgorithm import GeneticAlgorithm
 
 class Interface:
 
+    frame_number = 0
+    folder = "captures"
+
     def __init__(self, root):
+        self.ag = None
+
         self.root = root
         self.root.title("Algoritmo Genetico")
         self.root.geometry("900x500")
@@ -67,6 +74,10 @@ class Interface:
         self.button = tk.Button(self.frame_inputs, text="Iterar", command=self.run)
         self.button.grid(row=13, column=0, pady=5)
 
+        # Button Save Video
+        self.button_save_video = tk.Button(self.frame_inputs, text="Guardar video", command=self.save_video)
+        self.button_save_video.grid(row=14, column=0, pady=10)
+        
         # Graphic
         self.frame = tk.Frame(self.root)
         self.fig, self.ax = plt.subplots()
@@ -82,25 +93,27 @@ class Interface:
 
     
     def run(self):
-        a = int(self.input_a.get())
-        b = int(self.input_b.get())
-        dx = float(self.input_dx.get())
-        p_cross = float(self.input_cross.get())
-        p_mutation = float(self.input_mutation.get())
-        p_mutation_bit = float(self.input_mutation_bit.get())
-        self.ag = GeneticAlgorithm(a, b, dx, p_cross, p_mutation, p_mutation_bit)
-        self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y = self.ag.start()
+        if not self.ag:
+            a = int(self.input_a.get())
+            b = int(self.input_b.get())
+            dx = float(self.input_dx.get())
+            p_cross = float(self.input_cross.get())
+            p_mutation = float(self.input_mutation.get())
+            p_mutation_bit = float(self.input_mutation_bit.get())
+            self.ag = GeneticAlgorithm(a, b, dx, p_cross, p_mutation, p_mutation_bit)
+        self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y, self.n_generation = self.ag.start()
+
         self.update_graph()
 
     def update_graph(self):
 
         self.ax.clear()
-        self.ax.set_title("Generación")
+        self.ax.set_title(f"Generación #{self.n_generation}")
         self.ax.set_xlabel("Tiempo")
         self.ax.set_ylabel("Aptitud")
         self.ax.grid(True)
 
-        self.ax.plot(self.generation_x, self.avg_y, label="Promedio", color="blue", zorder=1)
+        self.ax.plot(self.generation_x, self.avg_y, label="Promedio", color="blue", zorder=1, linestyle='--')
         self.ax.plot(self.generation_x, self.generation_y, label="F(x)", color="orange", zorder=2)
 
         self.ax.scatter(self.generation_x, self.generation_y, label="Individuo", color="purple", zorder=3)
@@ -109,9 +122,60 @@ class Interface:
 
         self.ax.legend()
 
+        self.set_capture()
 
         self.canvas.draw()
 
+    def set_capture(self):
+        
+        self.frame_number += 1
+        file_path = os.path.join(self.folder, f"grafica_{self.frame_number}.png")
+        self.fig.savefig(file_path)
+        print(f"Imagen guardada: {file_path}")
+    
+    def save_video(self):
+        fps = 1
+        video_name="graficas_video.avi"
 
+        images = [f for f in os.listdir(self.folder) if f.endswith(".png")]
+        if not images:
+            print("No se encontraron imágenes en la carpeta para crear el video.")
+            return
 
+        images.sort(key=lambda x: int(x.split('_')[1].split('.')[0]))
 
+        first_image_path = os.path.join(self.folder, images[0])
+        frame = cv2.imread(first_image_path)
+        if frame is None:
+            print(f"Error al leer la imagen: {first_image_path}")
+            return
+
+        height, width, layers = frame.shape
+
+        video = cv2.VideoWriter(video_name, cv2.VideoWriter_fourcc(*'DIVX'), fps, (width, height))
+        print(f"Creando video: {video_name}")
+
+        for image in images:
+            img_path = os.path.join(self.folder, image)
+            img = cv2.imread(img_path)
+            if img is None:
+                print(f"Error al leer la imagen: {img_path}")
+                continue
+
+            if img.shape[:2] != (height, width):
+                img = cv2.resize(img, (width, height))
+
+            video.write(img)
+
+        video.release()
+        print(f"Video guardado exitosamente en: {video_name}")
+
+        print("Eliminando imágenes...")
+        for image in images:
+            img_path = os.path.join(self.folder, image)
+            try:
+                os.remove(img_path)
+            except OSError as e:
+                print(f"Error al eliminar {img_path}: {e}")
+
+        print("Todas las imágenes han sido eliminadas.")

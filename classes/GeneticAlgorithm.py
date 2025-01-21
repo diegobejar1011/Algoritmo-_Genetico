@@ -31,8 +31,6 @@ class GeneticAlgorithm:
 
     n_generation = 0
 
-
-
     def __init__(self, a, b, dx, p_cross, p_mutation, p_mutation_bit):
         self.a = a
         self.b = b
@@ -138,6 +136,9 @@ class GeneticAlgorithm:
             "average": average_subject
         })
 
+        self.n_generation = self.n_generation + 1
+        print(f"N_generation: {self.n_generation}")
+
         for i in range(len(self.generations)):
             print(f"i: {self.generations[i]["best"].i } aptitude: {self.generations[i]["best"].aptitude }" )
             print(f"i: {self.generations[i]["worst"].i } aptitude: {self.generations[i]["worst"].aptitude }" )
@@ -163,7 +164,6 @@ class GeneticAlgorithm:
         self.avg_y.clear()
 
         j = len(self.generations) - 1
-        print(j)
         generation = self.generations[j]
         self.best_x.append(generation["best"].i)
         self.best_y.append(generation["best"].aptitude)
@@ -178,6 +178,11 @@ class GeneticAlgorithm:
             self.generation_x.append(subject.i)
             self.generation_y.append(subject.aptitude)
             self.avg_y.append(generation["average"])
+
+    def clean_arrys(self):
+        self.childrens.clear()
+        self.matches.clear()
+        self.generation.clear()
 
     def start(self):
 
@@ -194,13 +199,16 @@ class GeneticAlgorithm:
         self.set_mutations()
 
         self.set_generation()
+
         self.get_data_for_generation()
 
         self.set_mow()
         self.parents = self.generation
 
+        self.clean_arrys()
+
         # self.get_data_to_graphic()
 
         # return self.y_best, self.y_worst, self.y_avg, self.x_generation
 
-        return self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y
+        return self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y, self.n_generation
