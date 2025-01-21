@@ -131,6 +131,11 @@ class GeneticAlgorithm:
             print(f"i: {self.generations[i]["average"] }" )
 
     def get_data_to_graphic(self):
+
+        self.y_best.clear()
+        self.y_worst.clear()
+        self.y_avg.clear()
+        self.x_generation.clear()
         
         for i in range(len(self.generations)):
             generation = self.generations[i]
@@ -138,6 +143,10 @@ class GeneticAlgorithm:
             self.y_worst.append(generation["worst"].aptitude)
             self.y_avg.append(generation["average"])
             self.x_generation.append(i + 1)
+    
+    def clear_arrays(self):
+        self.childrens.clear()
+        self.matches.clear()
 
     def start(self):
         
@@ -157,6 +166,8 @@ class GeneticAlgorithm:
 
         self.set_mow()
         self.parents = self.generation
+
+        self.clear_arrays()
 
         self.get_data_to_graphic()
 
