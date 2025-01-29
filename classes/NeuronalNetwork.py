@@ -13,6 +13,8 @@ class NeuronalNetwork:
 
     w_iterations = []
 
+    time = 0
+
     def __init__(self, data):
         self.data = data
         self.n = 0.1
@@ -27,8 +29,8 @@ class NeuronalNetwork:
             number = round(get_random_number(), 1)
             self.w.append(number)
         
-        print("Peso:")
-        print(self.w)
+        #print("Peso:")
+        #print(self.w)
 
     def get_y_calculate(self):
         aux_x = np.array(self.x)
@@ -42,8 +44,8 @@ class NeuronalNetwork:
 
         self.error = (aux_y - aux_y_c).tolist()
 
-        print("Error:")
-        print(self.error[:10])
+        # print("Error:")
+        # print(self.error[:10])
 
     def set_dw(self):
         aux_dw = np.array(self.x)
@@ -60,10 +62,10 @@ class NeuronalNetwork:
 
         self.w = (aux_w + dw).tolist()
 
-        self.w_iterations.append(self.w)
+        self.w_iterations.append(sorted(self.w, reverse=True))
 
-        print("Peso:")
-        print(self.w)
+        # print("Peso:")
+        # print(self.w)
 
     def start(self):
 
@@ -82,4 +84,9 @@ class NeuronalNetwork:
 
         # Dar una nueva w
         self.set_w()
+
+        aux_error = sorted(np.abs(self.error), reverse=True)
+        self.time += 1
+
+        return aux_error, self.w_iterations, self.time, self.y, self.y_calculate
     
