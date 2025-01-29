@@ -152,6 +152,8 @@ class Interface:
 
     def update_graph(self):
 
+        self.ej_x = list(range(1, self.time + 1))
+
         # First Graphic
         self.ax.clear()
         self.ax.set_title(f"Epoca #{self.time}")
@@ -159,7 +161,7 @@ class Interface:
         # self.ax.set_ylabel("Aptitud")
         self.ax.grid(True)
 
-        self.ax.plot(self.error, label="Error", color="blue", zorder=1)
+        self.ax.plot(self.ej_x, self.error, label="Error", color="blue", zorder=1)
 
         self.ax.legend()
 
@@ -174,20 +176,11 @@ class Interface:
         self.second_ax.set_ylabel("Valor de los pesos")
         self.second_ax.grid(True)
 
-        # times = list(range(len(self.w_iterations[0])))
-
-        # for i in range(len(self.w_iterations)):
-        #     self.second_ax.plot(times, self.w_iterations[i], label=f"W{i+1}", zorder=i+1, linestyle='-')
-        #     print(self.w_iterations[i])
+        # for i, col in enumerate(self.w_iterations):
+        #     plt.plot(,col, label=f'Columna {i+1}', marker='o') 
         
-        self.second_ax.plot(self.w_iterations[0], label="Grafica 1", color='blue')
-        self.second_ax.set_xlabel('Época')
-        self.second_ax.set_ylabel('Valor de los pesos (Grafica 1)', color='blue')
-        self.second_ax.tick_params(axis='y', labelcolor='blue')
-
-        for i in range(1, len(self.w_iterations)):
-            ax2 = self.second_ax.twinx() 
-            ax2.plot(self.w_iterations[i], linestyle='-')
+        for i, w in enumerate(self.w_iterations):
+            self.second_ax.plot(self.ej_x, w, label=f'W{i+1}', marker='o') 
 
 
         # self.second_ax.legend()
@@ -205,8 +198,6 @@ class Interface:
         self.third_ax.plot(self.y, label="Y deseada", color="blue", zorder=1, linestyle='-')
         self.third_ax.plot(self.y_c, label="Y calculada", color="red", zorder=2, linestyle='-', marker="o")
 
-        print(self.y)
-        print(self.y_c)
 
         self.third_ax.legend()
 

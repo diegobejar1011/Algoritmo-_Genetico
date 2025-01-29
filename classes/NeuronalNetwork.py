@@ -15,6 +15,8 @@ class NeuronalNetwork:
 
     time = 0
 
+    errors = []
+
     def __init__(self, data):
         self.data = data
         self.n = 0.1
@@ -66,6 +68,13 @@ class NeuronalNetwork:
 
         # print("Peso:")
         # print(self.w)
+    
+    def set_error(self):
+        self.errors.append(np.linalg.norm(self.error))
+        return self.errors
+
+    def set_w_iterations(self):
+            return list(map(list, zip(*self.w_iterations)))
 
     def start(self):
 
@@ -85,8 +94,10 @@ class NeuronalNetwork:
         # Dar una nueva w
         self.set_w()
 
-        aux_error = sorted(np.abs(self.error), reverse=True)
-        self.time += 1
+        aux_error = self.set_error()
+        aux_w_iterations = self.set_w_iterations()
 
-        return aux_error, self.w_iterations, self.time, self.y, self.y_calculate
+        self.time +=1
+
+        return aux_error, aux_w_iterations, self.time, self.y, self.y_calculate
     
