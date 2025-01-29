@@ -26,13 +26,15 @@ class NeuronalNetwork:
     
     def get_parameters(self):
         for i in range(len(self.data)):
-            self.x.append([ 1, self.data[i]["X1"], self.data[i]["X2"], self.data[i]["X3"]])
+            self.x.append([ 1, self.data[i]["X1"], self.data[i]["X2"], self.data[i]["X3"], self.data[i]["X4"], self.data[i]["X5"], self.data[i]["X6"]])
             self.y.append(self.data[i]["Y"])
     
         n_w = len(self.x[0])
         for i in range(n_w):
             number = round(get_random_number(), 1)
             self.w.append(number)
+        
+        print(self.w)
         
         #print("Peso:")
         #print(self.w)
@@ -56,7 +58,7 @@ class NeuronalNetwork:
         aux_dw = np.array(self.x)
         aux_dw_t = -aux_dw.T
 
-        self.dw = self.n * np.dot(-aux_dw.T, self.error) / len(self.y)
+        self.dw = self.n * np.dot(aux_dw.T, self.error) / len(self.y)
 
         # self.dw = (aux_dw_t @ self.error).tolist()
 
@@ -81,6 +83,14 @@ class NeuronalNetwork:
     def set_w_iterations(self):
             return list(map(list, zip(*self.w_iterations)))
 
+    def get_error_abs_y(self):
+        aux_yc = np.array(self.y_calculate)  # Convertir a numpy array
+        aux_y = np.array(self.y) 
+        print("Que")
+        diferencia_absoluta = np.abs(aux_yc - aux_y)
+        print(diferencia_absoluta)
+        return diferencia_absoluta
+
     def start(self):
 
         if not self.w:
@@ -104,5 +114,7 @@ class NeuronalNetwork:
 
         self.time +=1
 
-        return aux_error, aux_w_iterations, self.time, self.y, self.y_calculate
+        aux_y_error = self.get_error_abs_y()
+
+        return aux_error, aux_w_iterations, self.time, aux_y_error
     

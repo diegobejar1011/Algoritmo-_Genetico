@@ -8,7 +8,8 @@ from tkinter import filedialog
 from classes.GeneticAlgorithm import GeneticAlgorithm
 
 from classes.NeuronalNetwork import NeuronalNetwork
-from utils.get_dataset import get_dataset
+# from utils.get_dataset import get_dataset
+from utils.get_dataset_csv import  get_dataset_csv
 
 class Interface:
 
@@ -128,7 +129,7 @@ class Interface:
         self.third_fig, self.third_ax = plt.subplots()
         
         self.third_ax.grid(True)
-        self.third_ax.set_title("Yd & Yc")
+        self.third_ax.set_title("Yd & Yc Error absoluto")
 
         self.third_canvas = FigureCanvasTkAgg(self.third_fig, master = self.third_frame)
         self.third_canvas.get_tk_widget().grid()
@@ -152,11 +153,18 @@ class Interface:
                 print("Ingrese el dataset para iterar")
             else:
                 if not self.nn:
-                    data = get_dataset(self.archive)
+                    data = get_dataset_csv(self.archive)
                     self.nn = NeuronalNetwork(data)
-                self.error, self.w_iterations, self.time, self.y, self.y_c = self.nn.start()
-                print(sorted(self.error, reverse=True))
+                self.error, self.w_iterations, self.time, self.y_error = self.nn.start()
+
+                print(type(self.y_error))
                 self.update_graph()
+        print("Ultimo peso")
+        print(self.w_iterations[len(self.w_iterations) - 1])
+        print("Ultimo error")
+        print(self.y_error[len(self.y_error) - 1])
+        print("Epoca")
+        print(self.time)
 
     def update_graph(self):
 
@@ -199,13 +207,11 @@ class Interface:
 
         # Third Graphic
         self.third_ax.clear()
-        self.third_ax.set_title(f"Yd & Yc #{self.time}")
+        self.third_ax.set_title(f"Yd & Yc Error Absoluto #{self.time}")
         self.third_ax.set_xlabel("Observaciones")
         self.third_ax.grid(True)
 
-        self.third_ax.plot(self.y, label="Y deseada", color="blue", zorder=1, linestyle='-')
-        self.third_ax.plot(self.y_c, label="Y calculada", color="red", zorder=2, linestyle='-', marker="o")
-
+        self.third_ax.plot(self.y_error, label="Y deseada", color="blue", zorder=1, linestyle='-')
 
         self.third_ax.legend()
 
