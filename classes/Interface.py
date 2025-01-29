@@ -50,6 +50,12 @@ class Interface:
         self.label_archive = tk.Label(self.frame_inputs, text="Ningún archivo seleccionado")
         self.label_archive.grid(row=3, column=0, sticky="w", columnspan=2, pady=5)
 
+        # Input Iterations
+        self.label_iterations = tk.Label(self.frame_inputs, text="Iteraciones:")
+        self.label_iterations.grid(row=4, column=0, pady=5)
+        self.input_iterations = tk.Entry(self.frame_inputs)
+        self.input_iterations.grid(row=5, column=0, pady=5)
+
         # # Input A
         # self.label_a = tk.Label(self.frame_inputs, text="Ingrese el valor de A:")
         # self.label_a.grid(row=1, column=0, pady=5)
@@ -88,8 +94,8 @@ class Interface:
         # self.input_mutation_bit.grid(row=12, column=0, pady=5)
 
         # Button Run
-        self.button = tk.Button(self.frame_inputs, text="Iterar", command=self.run)
-        self.button.grid(row=4, column=0, columnspan=2, pady=5)
+        self.button = tk.Button(self.frame_inputs, text="Iniciar", command=self.run)
+        self.button.grid(row=6, column=0, columnspan=2, pady=5)
 
         # # Button Save Video
         # self.button_save_video = tk.Button(self.frame_inputs, text="Guardar video", command=self.save_video)
@@ -140,15 +146,17 @@ class Interface:
         #     p_mutation_bit = float(self.input_mutation_bit.get())
         #     self.ag = GeneticAlgorithm(a, b, dx, p_cross, p_mutation, p_mutation_bit)
         # self.generation_x, self.generation_y, self.best_x, self.best_y, self.worst_x, self.worst_y, self.avg_y, self.n_generation = self.ag.start()
-
-        if not self.archive:
-            print("Ingrese el dataset para iterar")
-        else:
-            if not self.nn:
-                data = get_dataset(self.archive)
-                self.nn = NeuronalNetwork(data)
-            self.error, self.w_iterations, self.time, self.y, self.y_c = self.nn.start()
-            self.update_graph()
+        iterations = int(self.input_iterations.get())
+        for i in range(iterations):
+            if not self.archive:
+                print("Ingrese el dataset para iterar")
+            else:
+                if not self.nn:
+                    data = get_dataset(self.archive)
+                    self.nn = NeuronalNetwork(data)
+                self.error, self.w_iterations, self.time, self.y, self.y_c = self.nn.start()
+                print(sorted(self.error, reverse=True))
+                self.update_graph()
 
     def update_graph(self):
 
@@ -180,7 +188,7 @@ class Interface:
         #     plt.plot(,col, label=f'Columna {i+1}', marker='o') 
         
         for i, w in enumerate(self.w_iterations):
-            self.second_ax.plot(self.ej_x, w, label=f'W{i+1}', marker='o') 
+            self.second_ax.plot(self.ej_x, w, label=f'W{i+1}') 
 
 
         # self.second_ax.legend()

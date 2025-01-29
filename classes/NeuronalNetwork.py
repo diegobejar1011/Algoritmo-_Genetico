@@ -17,6 +17,9 @@ class NeuronalNetwork:
 
     errors = []
 
+    y_history = []
+    y_c_history = []
+
     def __init__(self, data):
         self.data = data
         self.n = 0.1
@@ -53,7 +56,9 @@ class NeuronalNetwork:
         aux_dw = np.array(self.x)
         aux_dw_t = -aux_dw.T
 
-        self.dw = (aux_dw_t @ self.error).tolist()
+        self.dw = self.n * np.dot(-aux_dw.T, self.error) / len(self.y)
+
+        # self.dw = (aux_dw_t @ self.error).tolist()
 
     def set_w(self):
         aux_dw = np.array(self.dw)
@@ -64,7 +69,7 @@ class NeuronalNetwork:
 
         self.w = (aux_w + dw).tolist()
 
-        self.w_iterations.append(sorted(self.w, reverse=True))
+        self.w_iterations.append(self.w)
 
         # print("Peso:")
         # print(self.w)
